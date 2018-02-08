@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 Internet Connected Heroku Art
+  p Let's get setup!
+  ol
+    li.inactive
+      p Login with your Heroku account ✔️
+    li
+      p Choose a Heroku app whose data to show on device
+      ol
+        each app in apps
+          li
+            a(href="/3")= app.name
+    li.inactive
+      p Select your device type
+    li.inactive
+      p Setup device
