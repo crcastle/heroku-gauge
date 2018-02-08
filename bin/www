@@ -39,11 +39,11 @@ wss.on('connection', (ws, req) => {
     console.log(`WebSocket error`, err);
   });
   
-  const msg = 'hello from server';
-  ws.send(msg, err => {
-    if (err) console.log(`Error sending WebSocket message`, err);
-    console.log(`Send message`, msg);
-  });
+  // const msg = 'hello from server';
+  // ws.send(msg, err => {
+  //   if (err) console.log(`Error sending WebSocket message`, err);
+  //   console.log(`Send message`, msg);
+  // });
 });
 
 /**
