@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('internet-connected-heroku-art:server');
 var http = require('http');
+var WebSocket = require('ws');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,30 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/**
+ * Create WebSocket server.
+ */
+var wss = new WebSocket.Server({ server });
+wss.on('connection', (ws, req) => {
+  console.log(`WebSocket client connected`);
+  // TODO: add authentication with a query string token
+  // const location = url.parse(req.url, true);
+  // You might use location.query.access_token to authenticate or share sessions
+  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+  ws.on('message', msg => {
+    console.log(`Received WebSocket message`, msg);
+  });
+  ws.on('error', err => {
+    console.log(`WebSocket error`, err);
+  });
+  
+  const msg = 'hello from server';
+  ws.send(msg, err => {
+    if (err) console.log(`Error sending WebSocket message`, err);
+    console.log(`Send message`, msg);
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.

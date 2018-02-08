@@ -14,7 +14,6 @@ var users = require('./routes/users');
 var herokuCallback = require('./routes/herokuCallback');
 var chooseApp = require('./routes/chooseApp');
 var selectDevice = require('./routes/selectDevice');
-var test = require('./routes/test');
 
 var grant = new Grant(config[process.env.NODE_ENV || 'development']['oauth']);
 
@@ -51,7 +50,6 @@ app.use('/users', users);
 app.use('/handle_heroku_callback', herokuCallback);
 app.use('/2', chooseApp);
 app.use('/3', selectDevice);
-app.use('/test', test);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
