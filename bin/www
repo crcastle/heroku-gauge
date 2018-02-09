@@ -25,7 +25,19 @@ var server = http.createServer(app);
 /**
  * Create WebSocket server.
  */
-var wss = new WebSocket.Server({ server, perMessageDeflate: true });
+var wss = new WebSocket.Server({
+  server,
+  verifyClient: (info) => {
+    console.log(info.origin);
+    console.log(info.req);
+    console.log(info.secure);
+    return true;
+  },
+  handleProtocols: (protocols, request) => {
+    console.log(protocols);
+    console.log(request);
+  }
+});
 wss.on('connection', (ws, req) => {
   console.log(`WebSocket client connected`);
   // TODO: add authentication with a query string token
