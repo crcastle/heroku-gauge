@@ -11,7 +11,7 @@ const config = {
     oauth: {
       server: {
         protocol: 'https',
-        host: '',
+        host: 'internet-connected-heroku-art.herokuapp.com',
         state: true,
         transport: 'session'
       },
