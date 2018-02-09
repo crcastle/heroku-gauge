@@ -25,19 +25,7 @@ var server = http.createServer(app);
 /**
  * Create WebSocket server.
  */
-var wss = new WebSocket.Server({
-  server,
-  verifyClient: (info) => {
-    console.log(info.origin);
-    console.log(info.req);
-    console.log(info.secure);
-    return true;
-  },
-  handleProtocols: (protocols, request) => {
-    console.log(protocols);
-    console.log(request);
-  }
-});
+var wss = new WebSocket.Server({ server });
 wss.on('connection', (ws, req) => {
   console.log(`WebSocket client connected`);
   // TODO: add authentication with a query string token
@@ -57,6 +45,9 @@ wss.on('connection', (ws, req) => {
   //   console.log(`Send message`, msg);
   // });
 });
+wss.on('headers', (headers, req) => {
+  console.log(`Headers`, headers);
+})
 
 /**
  * Listen on provided port, on all network interfaces.
