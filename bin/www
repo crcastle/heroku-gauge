@@ -39,15 +39,14 @@ wss.on('connection', (ws, req) => {
     console.log(`WebSocket error`, err);
   });
   
-  // const msg = 'hello from server';
-  // ws.send(msg, err => {
-  //   if (err) console.log(`Error sending WebSocket message`, err);
-  //   console.log(`Send message`, msg);
-  // });
+  setTimeout(() => {
+    const msg = Math.floor(Math.random() * 100);
+    ws.send(msg, err => {
+      if (err) console.log(`Error sending WebSocket message`, err);
+      console.log(`Sent message`, msg);
+    });
+  }, 3000);
 });
-wss.on('headers', (headers, req) => {
-  console.log(`Headers`, headers);
-})
 
 /**
  * Listen on provided port, on all network interfaces.
