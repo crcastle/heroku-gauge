@@ -7,12 +7,13 @@ block content
     li.inactive
       p Login with your Heroku account ✔️
     li
-      p Choose a Heroku app whose data to show on device
+      p Which app do you want to visualize?
       ol
         each app in apps
           li
-            a(href="/3")= app.name
+            a(href="/3?app=#{app.name}")= app.name
+            |  (#{app.organization ? app.organization.name : "Personal App"})
     li.inactive
-      p Select your device type
+      p Which device do you have?
     li.inactive
       p Setup device

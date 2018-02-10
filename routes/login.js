@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+/* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('selectDevice', {
-    app: req.query.app,
-    devices: ['one', 'two', 'three']
-  });
+  res.render('login', { oauthUrl: '/connect/heroku' });
 });
 
 module.exports = router;

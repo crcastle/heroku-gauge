@@ -3,7 +3,6 @@ var router = express.Router();
 
 router.get('/', function(req, res, next) {
   if (req.session.grant.response) {
-    console.log(req.session.grant.response);
     res.redirect('/2');
   } else {
     // else destroy the session and start over

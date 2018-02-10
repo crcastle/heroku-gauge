@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-  res.render('selectDevice', {
+  res.render('setupDevice', {
     app: req.query.app,
-    devices: ['one', 'two', 'three']
+    device: req.query.device,
+    host: req.hostname
   });
 });
 

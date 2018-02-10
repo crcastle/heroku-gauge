@@ -10,10 +10,11 @@ var Grant = require('grant-express');
 var config = require('./config.js');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var login = require('./routes/login');
 var herokuCallback = require('./routes/herokuCallback');
 var chooseApp = require('./routes/chooseApp');
 var selectDevice = require('./routes/selectDevice');
+var setupDevice = require('./routes/setupDevice');
 
 var grant = new Grant(config[process.env.NODE_ENV || 'development']['oauth']);
 
@@ -46,10 +47,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/1', login);
 app.use('/handle_heroku_callback', herokuCallback);
 app.use('/2', chooseApp);
 app.use('/3', selectDevice);
+app.use('/4', setupDevice);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
