@@ -2,7 +2,7 @@ const LogStream = require('./logStream');
 const WebSocketServer = require('./webSocketServer');
 const flyd = require('flyd');
 const every = require('flyd/module/every');
-const cacheUntil = require('./lib/cacheuntil');
+const cacheUntil = require('./lib/cacheUntil');
 
 const debug = require('debug')('heroku-gauge:logStreamer');
 
