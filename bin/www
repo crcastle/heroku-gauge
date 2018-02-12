@@ -5,9 +5,11 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('internet-connected-heroku-art:server');
+// var WebSocketServer = require('../WebSocketServer.js');
+var LogStreamer = require('../logStreamer.js');
+var debug = require('debug')('heroku-gauge:server');
 var http = require('http');
-var WebSocket = require('ws');
+
 
 /**
  * Get port from environment and store in Express.
@@ -23,35 +25,11 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
- * Create WebSocket server.
+ * Create and start LogStreamer.
  */
-var wss = new WebSocket.Server({ server });
-wss.on('connection', (ws, req) => {
-  console.log(`WebSocket client connected`);
-  // TODO: add authentication with a query string token
-  // const location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-  ws.on('message', msg => {
-    console.log(`Received WebSocket message`, msg);
-  });
-  ws.on('error', err => {
-    console.log(`WebSocket error`, err);
-  });
-  
-  const interval = setInterval(() => {
-    const msg = Math.floor(Math.random() * 100);
-    ws.send(msg, err => {
-      if (err) console.log(`Error sending WebSocket message`, err);
-      console.log(`Sent message`, msg);
-    });
-  }, 3000);
 
-  ws.on('close', function close() {
-    console.log('disconnected');
-    clearInterval(interval);
-  });
-});
+const logStreamer = new LogStreamer(server);
+logStreamer.startCheckingForConfig();
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -118,5 +96,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }

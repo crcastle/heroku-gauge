@@ -1,5 +1,5 @@
 {
-  "name": "internet-connected-heroku-art",
+  "name": "heroku-gauge",
   "version": "0.0.0",
   "private": true,
   "engines": {
@@ -15,9 +15,12 @@
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "express-session": "^1.15.6",
+    "flyd": "^0.2.6",
     "grant-express": "^3.8.1",
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
+    "node-fetch": "^2.0.0",
+    "r2": "^2.0.0",
     "serve-favicon": "~2.4.5",
     "ws": "^4.0.0"
   },
