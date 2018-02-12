@@ -47,6 +47,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Load this route if we're using loader.io to generate some load on app
+if (process.env['LOADERIO_TOKEN']) {
+  app.get(`/${process.env['LOADERIO_TOKEN']}`, (req, res, next) => {
+    res.send(process.env['LOADERIO_TOKEN']);
+  });
+}
+
 app.use('/', index);
 app.use('/1', login);
 app.use('/handle_heroku_callback', herokuCallback);
@@ -54,6 +61,7 @@ app.use('/2', chooseApp);
 app.use('/3', selectDevice);
 app.use('/4', setupDevice);
 app.use('/save', save);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
