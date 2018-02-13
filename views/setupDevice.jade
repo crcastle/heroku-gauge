@@ -12,14 +12,31 @@ block content
       p Which device do you have? ✔️
     li
       p Setup device
-        p Ok! Here are the steps to setup your device.
+        p Ok, here are the steps to setup your 
+          strong
+            code #{device}
+          |  to show data from Heroku app 
+          strong
+            code #{app}
+          | .
         ol
           li
-            p Plug it in to power (wall adapter or other USB power source).
+            p Plug it in to power (any USB power source).
           li
-            p Configure its wifi connection as instructed and input this app's name when asked
-            pre= host
+            p Configure its wifi connection as instructed and input the below information when asked
+            label(for="host")
+              code Host 
+            input(type='text', name='host', id='host', value='#{host}', disabled=true)
+            if deviceToken
+              br
+              label(for="device-token")
+               code Token 
+              input(type='device-token', name='device-token', id='device-token', value='#{deviceToken}', disabled=true)
+          br
           li Show it off on your desk, a shelf, or the wall!
+        br
+        br
+        br
         button It's working!
         span
           | 

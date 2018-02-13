@@ -4,7 +4,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   res.render('selectDevice', {
     app: req.query.app,
-    devices: ['one', 'two', 'three']
+    devices: ['M5Stack', 'Pixel Board']
   });
 });
 
