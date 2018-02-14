@@ -45,9 +45,10 @@ class LogStreamer {
       logs(logData);
     });
 
+    // Process log data
     const DURATION = 1000;
-    const logLineCount = flyd.map(this.processData, logs);
     const trigger = every(DURATION);
+    const logLineCount = flyd.map(this.processData, logs);
     const cache = cacheUntil(trigger, logLineCount);
     const linesPerDuration = flyd.map( (arr) => {
       return arr.reduce( (total, num) => total+num, 0);
@@ -55,7 +56,7 @@ class LogStreamer {
 
     flyd.on( r => debug(`Current rate: `, r, `per ${DURATION} ms`), linesPerDuration);
 
-    // Send data to WebSocket connections
+    // Send processed log data to WebSocket connections
     flyd.on( r => wss.send(r, err => {
       if (err) debug(`Error sending websocket message`, err);
     }), linesPerDuration);
@@ -63,7 +64,6 @@ class LogStreamer {
   
   // Receives log data and returns processed data suitable for the device
   // Overwrite this function to change what data is sent to the device
-  // TODO: simple count req/sec implementation
   processData(data) {
     return (data.match(/\n/g) || []).length;
   }

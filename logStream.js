@@ -1,6 +1,5 @@
 const EventEmitter = require('events');
 const fetch = require('node-fetch');
-const axios = require('axios');
 var debug = require('debug')('heroku-gauge:logStream');
 
 // Creates and receives a Heroku app log stream
@@ -19,8 +18,8 @@ class LogStream extends EventEmitter {
       debug(`Starting log stream`);
       stream = await this._createLogStream();
     } catch (e) {
-      debug(`Error creating log stream`, e);
-      process.exit(1);
+      console.log(`Error creating log stream`, e);
+      debug(e.stack);
     }
     
     // emit events for each chunk of new log data
@@ -45,18 +44,6 @@ class LogStream extends EventEmitter {
   async _createLogStream() {
     console.log(`Requesting log session for app ${this.appName}`);
     try {
-      // logSession = await axios.post(`https://api.heroku.com/apps/${this.appName}/log-sessions`, {
-      //   headers: {
-      //     'content-type': 'application/json',
-      //     'accept': 'application/vnd.heroku+json; version=3',
-      //     'authorization': `Bearer ${this.apiToken}`
-      //   },
-      //   data: {
-      //     dyno: 'router',
-      //     source: 'heroku',
-      //     tail: true
-      //   }
-      // });
       const logSessionResponse = await fetch(`https://api.heroku.com/apps/${this.appName}/log-sessions`, {
         method: 'POST',
         body: JSON.stringify({
@@ -80,13 +67,11 @@ class LogStream extends EventEmitter {
         
         return logsResponse.body;
       } else {
-        throw new Error('Invalid log session');
+        throw new Error('Invalid log session response');
       }
 
     } catch (e) {
-      debug(e);
-      process.exit(1);
-      // throw(e);
+      throw(e);
     }
   }
 }
