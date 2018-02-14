@@ -29,7 +29,7 @@ class LogStream extends EventEmitter {
     });
 
     stream.on('end', () => {
-      debug(`Log stream ended`);
+      console.log(`Log stream ended`);
       // TODO: reopen log stream
     });
 
