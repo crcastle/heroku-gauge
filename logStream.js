@@ -56,9 +56,15 @@ class LogStream extends EventEmitter {
           'Accept': 'application/vnd.heroku+json; version=3',
           'Authorization': `Bearer ${this.apiToken}`          
         }
-      })
-      const logSession = await logSessionResponse.json();
+      });
 
+      // Handle HTTP error responses
+      if (logSessionResponse.status >= 300) {
+        throw new Error(`Error creating log session: ${logSessionResponse.status} ${await logSessionResponse.text()}`);
+      }
+
+
+      const logSession = await logSessionResponse.json();
       debug(`Got log session: `, logSession);
       
       if (logSession.logplex_url) {
