@@ -12,6 +12,10 @@ class WebSocketServer extends EventEmitter {
     this.wss.on('connection', (ws, req) => {
       console.log('WebSocket connected');
 
+      ws.isAlive = true;
+
+      ws.on('pong', () => { ws.isAlive = true; });
+
       ws.on('error', err => {
         console.log(`WebSocket error`, err);
       });
@@ -25,6 +29,15 @@ class WebSocketServer extends EventEmitter {
         debug(`Received message:`, msg);
       });
     });
+
+    setInterval(() => {
+      this.wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+
+        ws.isAlive = false;
+        ws.ping(() => {});
+      });
+    }, 20000);
 
     return this;
   }
