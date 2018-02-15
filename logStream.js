@@ -13,34 +13,34 @@ class LogStream extends EventEmitter {
 
   async start() {
     // get a log stream
-    let stream;
     try {
       debug(`Starting log stream`);
-      stream = await this._createLogStream();
+      this.stream = await this._createLogStream();
     } catch (e) {
       console.log(`Error creating log stream`, e);
       debug(e.stack);
     }
+    this.stream.setEncoding('utf8');
     
     // emit events for each chunk of new log data
-    stream.setEncoding('utf8');
-    stream.on('data', logChunk => {
+    this.stream.on('data', logChunk => {
       this.emit('data', logChunk);
     });
 
-    stream.on('end', () => {
+    this.stream.on('end', async () => {
       console.log(`Log stream ended`);
-      // TODO: reopen log stream
+      console.log(`Trying to recreate log stream.`);
+
+      this.start();
     });
 
-    stream.on('error', err => {
+    this.stream.on('error', err => {
       console.log(`Error reading log stream`, err);
-      // TODO: reopen log stream
+      // TODO: reopen log stream?
     });
   }
 
   // Create and return stream to logs
-  // TODO: handle stream disconnect
   async _createLogStream() {
     console.log(`Requesting log session for app ${this.appName}`);
     try {
