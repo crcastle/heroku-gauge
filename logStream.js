@@ -1,5 +1,9 @@
 const EventEmitter = require('events');
 const fetch = require('node-fetch');
+const retry = require('async-retry');
+const TokenProvider = require('./lib/tokenProvider');
+const tokenProvider = new TokenProvider();
+
 var debug = require('debug')('heroku-gauge:logStream');
 
 // Creates and receives a Heroku app log stream
@@ -15,11 +19,25 @@ class LogStream extends EventEmitter {
     // get a log stream
     try {
       debug(`Starting log stream`);
-      this.stream = await this._createLogStream();
+      await retry(async bail => {
+        const resp = await this._createLogStream();
+
+        if (resp.status >= 300 && resp.status !== 401) {
+          bail(new Error(resp));
+          return;
+        }
+
+        this.stream = resp;
+      },{
+        retries: 3
+      });
     } catch (e) {
+
       console.log(`Error creating log stream`, e);
       debug(e.stack);
     }
+
+
     this.stream.setEncoding('utf8');
     
     // emit events for each chunk of new log data
@@ -54,13 +72,15 @@ class LogStream extends EventEmitter {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.heroku+json; version=3',
-          'Authorization': `Bearer ${this.apiToken}`          
+          'Authorization': `Bearer ${await tokenProvider.getToken()}`          
         }
       });
 
       // Handle HTTP error responses
       if (logSessionResponse.status >= 300) {
-        throw new Error(`Error creating log session: ${logSessionResponse.status} ${await logSessionResponse.text()}`);
+        const err = new Error(`Error creating log session: ${logSessionResponse.status} ${await logSessionResponse.text()}`)
+        err.status = logSessionResponse.status;
+        throw err;
       }
 
 

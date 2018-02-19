@@ -4,6 +4,7 @@ const heroku = {
   secret: process.env['HEROKU_OAUTH_SECRET'],
   scope: ['read'],
   callback: '/handle_heroku_callback',
+  tokenUrl: 'https://id.heroku.com/oauth/token',
 }
 
 const config = {

@@ -22,7 +22,6 @@ var grant = new Grant(config[process.env.NODE_ENV || 'development']['oauth']);
 var app = express();
 
 // Redirect all HTTP traffic to HTTPS in production
-// But only in Heroku app with HEROKU_ENV == production (b/c private spaces)
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     app.enable('trust proxy', 'loopback')

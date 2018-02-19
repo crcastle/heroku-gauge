@@ -1,5 +1,7 @@
 const LogStream = require('./logStream');
 const WebSocketServer = require('./webSocketServer');
+const TokenProvider = require('./lib/tokenProvider');
+const tokenProvider = new TokenProvider();
 const flyd = require('flyd');
 const every = require('flyd/module/every');
 const cacheUntil = require('./lib/cacheUntil');
@@ -19,7 +21,7 @@ class LogStreamer {
         clearInterval(dataCheck);
         this.startStream();
       }
-    },5000);
+    }, 5000);
   }
 
   startStream() {
@@ -78,7 +80,9 @@ class LogStreamer {
     // return true;
     // else
     // return false;
-    if (process.env['APP_NAME'] && process.env['API_TOKEN']) {
+    if (process.env['APP_NAME'] &&
+        process.env['API_TOKEN'] &&
+        tokenProvider.currentToken) {
       this.appName = process.env['APP_NAME'];
       this.apiToken = process.env['API_TOKEN'];
       return true;
