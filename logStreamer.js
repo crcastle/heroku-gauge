@@ -40,7 +40,7 @@ class LogStreamer {
       throw(e);
     });
 
-    // Send log data to stream for processing
+    // Send log data to a stream for processing
     const logs = flyd.stream();
     logStream.on('data', logData => {
       debug(`Got log message:`, logData);

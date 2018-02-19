@@ -1,5 +1,6 @@
 var WebSocket = require('ws');
 var EventEmitter = require('events');
+var url = require('url');
 var debug = require('debug')('heroku-gauge:webSocketServer');
 
 class WebSocketServer extends EventEmitter {
@@ -10,6 +11,10 @@ class WebSocketServer extends EventEmitter {
 
   setup() {
     this.wss.on('connection', (ws, req) => {
+      if (!this.clientIsAllowed(req)) {
+        return ws.terminate();
+      }
+
       console.log('WebSocket connected');
 
       ws.isAlive = true;
@@ -52,6 +57,17 @@ class WebSocketServer extends EventEmitter {
         client.send(data);
       }
     });
+  }
+
+  // Authenticate the client request with pre-shared token
+  // only if token is defined as env var
+  clientIsAllowed(req) {
+      const query = url.parse(req.url, true).query;
+      if (process.env['DEVICE_TOKEN'] && query.token === process.env['DEVICE_TOKEN']) {
+        return true;
+      }
+      console.log(`WebSocket client not allowed`);
+      return false;
   }
 }
 
