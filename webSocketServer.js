@@ -68,11 +68,11 @@ class WebSocketServer extends EventEmitter {
   // only if token is defined as env var
   clientIsAllowed(req) {
       const query = url.parse(req.url, true).query;
-      if (process.env['DEVICE_TOKEN'] && query.token === process.env['DEVICE_TOKEN']) {
-        return true;
+      if (process.env['DEVICE_TOKEN'] && query.token !== process.env['DEVICE_TOKEN']) {
+        console.log(`WebSocket client not allowed`);
+        return false;
       }
-      console.log(`WebSocket client not allowed`);
-      return false;
+      return true;
   }
 }
 
