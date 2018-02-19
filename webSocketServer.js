@@ -24,6 +24,11 @@ class WebSocketServer extends EventEmitter {
         ws.isAlive = true;
       });
 
+      ws.on('ping', () => {
+        console.log(`Received ping`);
+        ws.isAlive = true;
+      })
+
       ws.on('error', err => {
         console.log(`WebSocket error`, err);
       });
