@@ -15,6 +15,13 @@ class WebSocketServer extends EventEmitter {
         return ws.terminate();
       }
 
+      // Disconnect client after 25 minutes so that client makes
+      //  request to reconnect and keeps Herok dyno from idling
+      setTimeout(() => {
+        console.log(`Forcing WebSocket client disconnect to keep dyno from idling`);
+        ws.terminate();
+      }, 25*60*1000);
+
       console.log('WebSocket connected');
 
       ws.isAlive = true;
