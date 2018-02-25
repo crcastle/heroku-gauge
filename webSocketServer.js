@@ -27,12 +27,12 @@ class WebSocketServer extends EventEmitter {
       ws.isAlive = true;
 
       ws.on('pong', () => {
-        console.log(`Received pong`);
+        debug(`Received pong`);
         ws.isAlive = true;
       });
 
       ws.on('ping', () => {
-        console.log(`Received ping`);
+        debug(`Received ping`);
         ws.isAlive = true;
       })
 
@@ -55,7 +55,7 @@ class WebSocketServer extends EventEmitter {
         if (ws.isAlive === false) return ws.terminate();
 
         ws.isAlive = false;
-        console.log(`Sending ping`);
+        debug(`Sending ping`);
         ws.ping(() => {});
       });
     }, 20000);
