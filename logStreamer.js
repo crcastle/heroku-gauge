@@ -6,6 +6,8 @@ const flyd = require('flyd');
 const every = require('flyd/module/every');
 const cacheUntil = require('./lib/cacheUntil');
 
+const db = require('./db');
+
 const debug = require('debug')('heroku-gauge:logStreamer');
 
 class LogStreamer {
@@ -15,9 +17,9 @@ class LogStreamer {
   
   // Continuously check to see if config is available
   // When available, start the stream
-  startCheckingForConfig() {
-    const dataCheck = setInterval(() => {
-      if (this.isConfigAvailable()) {
+  async startCheckingForConfig() {
+    const dataCheck = setInterval(async () => {
+      if (await this.isConfigAvailable()) {
         clearInterval(dataCheck);
         this.startStream();
       }
@@ -30,14 +32,14 @@ class LogStreamer {
     wss.setup();
 
     // Setup log stream
-    const logStream = new LogStream(this.appName, this.apiToken);
+    const logStream = new LogStream(this.appName);
     
     logStream.start()
     .then(() => {
       console.log('Sending log stream to WebSocket.');
     })
     .catch(e => {
-      throw(e);
+      throw e;
     });
 
     // Send log data to a stream for processing
@@ -71,24 +73,16 @@ class LogStreamer {
   }
 
   // Check if data is available and set instance vars
-  // TODO: implement
-  isConfigAvailable() {
+  async isConfigAvailable() {
     // if data in database
-    // console.log('LogStreamer found data in database');
-    // this.app = app;
-    // this.apiToken = apiToken;
-    // return true;
-    // else
-    // return false;
-    if (process.env['APP_NAME'] &&
-        process.env['API_TOKEN'] &&
-        tokenProvider.currentToken) {
-      this.appName = process.env['APP_NAME'];
-      this.apiToken = process.env['API_TOKEN'];
-      return true;
-    } else {
-      return false;
-    }
+    const config = await db.getActiveConfiguration();
+    const ready = (config.oauth_token && config.app_name);
+
+    if (!ready) return false;
+
+    debug('Found configuration in database for', config.app_name);
+    this.appName = config.app_name;
+    return true;
   }
 }
 

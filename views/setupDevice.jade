@@ -37,7 +37,9 @@ block content
         br
         br
         br
-        button It's working!
+        form(name="configuration", action="/save?app=#{app}&device=#{device}" method="post")
+          input(type="hidden", name="deviceToken", value='#{deviceToken}')
+          input(type="submit", value="Save Configuration")
         span
           | 
           a(href="") (help me, something's not working right)

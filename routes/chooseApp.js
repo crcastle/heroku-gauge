@@ -2,11 +2,14 @@ var axios = require('axios');
 var express = require('express');
 var router = express.Router();
 
+var TokenProvider = require('../lib/tokenProvider');
+var tokenProvider = new TokenProvider();
+
 // get list of user's apps
 router.get('/', async function(req, res, next) {
   const headers = {
     'Accept': 'application/vnd.heroku+json; version=3',
-    'Authorization': `Bearer ${req.session.grant.response.access_token}`
+    'Authorization': `Bearer ${await tokenProvider.getActiveToken()}`
   };
 
   let data = [];

@@ -29,7 +29,8 @@ var server = http.createServer(app);
  */
 
 const logStreamer = new LogStreamer(server);
-logStreamer.startCheckingForConfig();
+logStreamer.startCheckingForConfig()
+  .catch(`Error starting LogStreamer`);
 
 /**
  * Listen on provided port, on all network interfaces.

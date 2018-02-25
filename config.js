@@ -14,10 +14,13 @@ const config = {
         protocol: 'https',
         host: 'heroku-gauge.herokuapp.com',
         state: true,
-        transport: 'session'
+        // transport: 'session'
       },
       heroku
-    }
+    },
+    db: {
+      url: process.env['DATABASE_URL']
+    },
   },
 
   development: {
@@ -26,11 +29,14 @@ const config = {
         protocol: 'http',
         host: 'localhost:5000',
         state: true,
-        transport: 'session',
+        // transport: 'session',
       },
       heroku
-    }
-  }
+    },
+    db: {
+      url: `postgres://postgres@localhost/postgres`
+    },
+  },
 }
 
 module.exports = config;

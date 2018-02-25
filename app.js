@@ -6,8 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var Grant = require('grant-express');
+var PGSession = require('connect-pg-simple')(session);
 
-var config = require('./config.js');
+var config = require('./config.js')[process.env.NODE_ENV || 'development'];
+
+var db = require('./db');
 
 var index = require('./routes/index');
 var login = require('./routes/login');
@@ -16,8 +19,9 @@ var chooseApp = require('./routes/chooseApp');
 var selectDevice = require('./routes/selectDevice');
 var setupDevice = require('./routes/setupDevice');
 var save = require('./routes/save');
+var success = require('./routes/success');
 
-var grant = new Grant(config[process.env.NODE_ENV || 'development']['oauth']);
+var grant = new Grant(config.oauth);
 
 var app = express();
 
@@ -39,10 +43,16 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(session({ secret: 'very secret', resave: false, saveUninitialized: false }));
+app.use(session({
+  store: new PGSession({ pool: db.pool, errorLog: console.log }),
+  secret: 'very secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
+}));
 app.use(grant);
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -53,6 +63,7 @@ app.use('/2', chooseApp);
 app.use('/3', selectDevice);
 app.use('/4', setupDevice);
 app.use('/save', save);
+app.use('/success', success);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

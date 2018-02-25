@@ -8,11 +8,10 @@ var debug = require('debug')('heroku-gauge:logStream');
 
 // Creates and receives a Heroku app log stream
 class LogStream extends EventEmitter {
-  constructor(appName, apiToken) {
+  constructor(appName) {
     super();
 
     this.appName = appName;
-    this.apiToken = apiToken;
   }
 
   async start() {
@@ -72,11 +71,11 @@ class LogStream extends EventEmitter {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/vnd.heroku+json; version=3',
-          'Authorization': `Bearer ${await tokenProvider.getToken()}`          
+          'Authorization': `Bearer ${await tokenProvider.getActiveToken()}`          
         }
       });
 
-      // Handle HTTP error responses
+      // Handle non-2xx HTTP responses
       if (logSessionResponse.status >= 300) {
         const err = new Error(`Error creating log session: ${logSessionResponse.status} ${await logSessionResponse.text()}`)
         err.status = logSessionResponse.status;
@@ -85,6 +84,7 @@ class LogStream extends EventEmitter {
 
 
       const logSession = await logSessionResponse.json();
+      
       debug(`Got log session: `, logSession);
       
       if (logSession.logplex_url) {
@@ -97,7 +97,7 @@ class LogStream extends EventEmitter {
       }
 
     } catch (e) {
-      throw(e);
+      throw e;
     }
   }
 }
