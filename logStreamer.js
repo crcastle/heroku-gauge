@@ -75,13 +75,13 @@ class LogStreamer {
   // Check if data is available and set instance vars
   async isConfigAvailable() {
     // if data in database
-    const config = await db.getActiveConfiguration();
-    const ready = (config.oauth_token && config.app_name);
+    const configuration = await db.getActiveConfiguration();
+    const ready = (configuration.oauth_token && configuration.app_name);
 
     if (!ready) return false;
 
-    debug('Found configuration in database for', config.app_name);
-    this.appName = config.app_name;
+    debug('Found configuration in database for', configuration.app_name);
+    this.appName = configuration.app_name;
     return true;
   }
 }
