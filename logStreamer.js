@@ -19,6 +19,7 @@ class LogStreamer {
   // When available, start the stream
   async startCheckingForConfig() {
     const dataCheck = setInterval(async () => {
+      debug(`Checking if configuration is available.`);
       if (await this.isConfigAvailable()) {
         clearInterval(dataCheck);
         this.startStream();
