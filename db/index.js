@@ -34,14 +34,31 @@ module.exports = {
     if (!token || !url) throw new Error('Missing token or url');
 
     const query = `
-      UPDATE configuration SET active = FALSE;
-
-      INSERT INTO configuration (oauth_token, refresh_url, active)
-      VALUES (
-        '${JSON.stringify(token)}',
-        '${url}',
-        TRUE
-      );
+      WITH upd AS (
+        INSERT INTO configuration(
+          oauth_token,
+          refresh_url,
+          app_name,
+          device_name,
+          device_token,
+          hostname,
+          active
+        )
+        SELECT
+          '${JSON.stringify(token)}' AS oauth_token,
+          '${url}' AS refresh_url,
+          c.app_name,
+          c.device_name,
+          c.device_token,
+          c.hostname,
+          c.active
+        FROM configuration AS c
+        WHERE active = TRUE
+        RETURNING id
+      )
+      UPDATE configuration
+      SET active = FALSE
+      WHERE configuration.id NOT IN (SELECT id FROM upd);
     `;
     debug('Running SQL:', query);
 
